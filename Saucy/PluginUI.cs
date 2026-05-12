@@ -468,7 +468,6 @@ public unsafe class PluginUI : Window
 
             var playSound = C.PlaySound;
 
-            ImGui.Columns(2, default, false);
             if (ImGui.Checkbox("Play sound upon completion", ref playSound))
             {
                 C.PlaySound = playSound;
@@ -477,11 +476,13 @@ public unsafe class PluginUI : Window
 
             if (playSound)
             {
-                ImGui.NextColumn();
                 ImGui.Text("Select Sound");
+                ImGui.SameLine();
+                ImGui.SetNextItemWidth(200f);
                 if (ImGui.BeginCombo("###SelectSound", C.SelectedSound))
                 {
                     var path = Path.Combine(Svc.PluginInterface.AssemblyLocation.Directory.FullName, "Sounds");
+                    Directory.CreateDirectory(path);
                     foreach (var file in new DirectoryInfo(path).GetFiles())
                     {
                         if (ImGui.Selectable($"{Path.GetFileNameWithoutExtension(file.FullName)}", C.SelectedSound == Path.GetFileNameWithoutExtension(file.FullName)))
@@ -494,13 +495,13 @@ public unsafe class PluginUI : Window
                     ImGui.EndCombo();
                 }
 
+                ImGui.SameLine();
                 if (ImGui.Button("Open Sound Folder"))
                 {
                     Process.Start("explorer.exe", @$"{Path.Combine(Svc.PluginInterface.AssemblyLocation.Directory.FullName, "Sounds")}");
                 }
                 ImGuiComponents.HelpMarker("Drop any MP3 files into the sound folder to add your own custom sounds.");
             }
-            ImGui.Columns(1);
         }
     }
 
